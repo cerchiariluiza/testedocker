@@ -1,0 +1,23 @@
+language: java
+jdk:
+  - oraclejdk11
+before_install:
+  - sudo apt-get update
+  - cd blogpessoal-api/
+  - echo "Let's start Maven Package!!!"
+  - mvn clean package -DskipTests
+  - cd ..
+  - echo "We are in root dir"
+script:
+  - docker-compose build
+before_deploy:
+  - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
+deploy:
+  provider: script
+  script:
+    docker tag blogpessoaldeploy-completo_db:latest "$DOCKER_USERNAME"/blogpessoaldeploy-completo_db1:$TRAVIS_JOB_ID;
+    docker push "$DOCKER_USERNAME"/blogpehttps://hub.docker.com/repository/docker/cerchiariluiza/blogpessoaldeploy-completo_dbssoaldeploy-completo_db1;
+  on:
+    brach: master
+notifications:
+  email: false
